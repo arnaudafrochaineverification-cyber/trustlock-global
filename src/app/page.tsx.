@@ -1,193 +1,111 @@
 
-const features = [
-  {
-    icon: "◈",
-    title: "Secure Identity",
-    description:
-      "Identify organizations and authorized representatives before they approve important documents."
-  },
-  {
-    icon: "▤",
-    title: "Document Protection",
-    description:
-      "Create a unique cryptographic fingerprint for every registered document version."
-  },
-  {
-    icon: "✓",
-    title: "Verified Approval",
-    description:
-      "Support one-person and two-person approval workflows based on organizational policy."
-  },
-  {
-    icon: "▦",
-    title: "QR Verification",
-    description:
-      "Allow banks and other authorized parties to independently check document approval records."
-  },
-  {
-    icon: "◷",
-    title: "Audit History",
-    description:
-      "Maintain traceable records of approvals, changes, cancellations and verification activity."
-  },
-  {
-    icon: "◎",
-    title: "Global Readiness",
-    description:
-      "Designed for multiple countries, currencies, languages and regulatory configurations."
+import { redirect } from "next/navigation";
+import { createSupabaseServerClient } from "@/lib/supabase-server";
+
+export const dynamic = "force-dynamic";
+
+async function signOutAction() {
+  "use server";
+
+  const supabase = await createSupabaseServerClient();
+  await supabase.auth.signOut();
+
+  redirect("/login");
+}
+
+export default async function DashboardPage() {
+  const supabase = await createSupabaseServerClient();
+
+  const {
+    data: { user },
+    error
+  } = await supabase.auth.getUser();
+
+  if (error || !user) {
+    redirect("/login");
   }
-];
 
-export default function HomePage() {
+  if (!user.email_confirmed_at) {
+    await supabase.auth.signOut();
+    redirect("/login?error=email-not-confirmed");
+  }
+
+  const metadata = user.user_metadata ?? {};
+
+  const companyName =
+    metadata.companyName || "Company details pending";
+
+  const country =
+    metadata.country || "Not provided";
+
+  const registrationNumber =
+    metadata.registrationNumber || "Not provided";
+
   return (
-    <>
-      <header className="site-header">
-        <div className="container navbar">
-          <a href="/" className="brand">
-            <span className="brand-mark">T</span>
-            <span>
-              TRUSTLOCK
-              <small style={{ display: "block", fontSize: "10px", letterSpacing: "2px" }}>
-                GLOBAL
-              </small>
-            </span>
-          </a>
+    <main className="container section">
+      <section className="status-panel">
+        <p>TRUSTLOCK GLOBAL</p>
 
-          <nav className="nav-links">
-            <a href="#about">About</a>
-            <a href="#technology">Technology</a>
-            <a href="#security">Security</a>
-            <a href="#contact">Contact</a>
-          </nav>
+        <h1>Organization Dashboard</h1>
 
-          <a href="#contact" className="btn btn-primary">
-            Get Started
-          </a>
-        </div>
-      </header>
+        <p>
+          Welcome. Your account has successfully passed
+          the email confirmation check.
+        </p>
 
-      <main>
-        <section className="hero">
-          <div className="container">
-            <div className="hero-content">
-              <div className="eyebrow">
-                A new standard for digital trust
-              </div>
+        <hr />
 
-              <h1>
-                Every approval.
-                <br />
-                Every document.
-                <br />
-                <span>Verified with trust.</span>
-              </h1>
+        <h2>Account Information</h2>
 
-              <p>
-                TRUSTLOCK GLOBAL is being developed to help organizations
-                protect important documents, verify authorized approvals
-                and establish independent digital trust across borders.
-              </p>
+        <p>
+          <strong>Company:</strong> {companyName}
+        </p>
 
-              <div className="hero-actions">
-                <a href="#technology" className="btn btn-primary">
-                  Explore TRUSTLOCK
-                </a>
-                <a href="#about" className="btn btn-outline">
-                  Learn More
-                </a>
-              </div>
-            </div>
-          </div>
-        </section>
+        <p>
+          <strong>Email:</strong> {user.email}
+        </p>
 
-        <section className="section" id="about">
-          <div className="container">
-            <div className="section-heading">
-              <div className="eyebrow">Our mission</div>
-              <h2>Trust should be independently verifiable.</h2>
-              <p>
-                A copied signature image should not be enough to prove
-                that an authorized person approved a document. TRUSTLOCK
-                is being designed to connect identity, authorization,
-                document integrity and independent verification.
-              </p>
-            </div>
-          </div>
-        </section>
+        <p>
+          <strong>Country:</strong> {country}
+        </p>
 
-        <section className="section" id="technology">
-          <div className="container">
-            <div className="section-heading">
-              <div className="eyebrow">The platform</div>
-              <h2>One global trust infrastructure.</h2>
-              <p>
-                A connected platform designed for companies, banks,
-                institutions and government organizations.
-              </p>
-            </div>
+        <p>
+          <strong>Registration Number:</strong>{" "}
+          {registrationNumber}
+        </p>
 
-            <div className="feature-grid">
-              {features.map((feature) => (
-                <article className="feature-card" key={feature.title}>
-                  <div className="feature-icon">{feature.icon}</div>
-                  <h3>{feature.title}</h3>
-                  <p>{feature.description}</p>
-                </article>
-              ))}
-            </div>
-          </div>
-        </section>
+        <hr />
 
-        <section className="section" id="security">
-          <div className="container">
-            <div className="status-panel">
-              <div className="eyebrow">Security first</div>
-              <h2>Designed around verifiable authorization.</h2>
-              <p>
-                The planned platform combines document fingerprints,
-                secure authentication, role-based permissions,
-                approval evidence and protected audit records.
-              </p>
-              <p>
-                TRUSTLOCK GLOBAL is currently under development.
-                Its security and legal capabilities will be independently
-                tested before production use.
-              </p>
-            </div>
-          </div>
-        </section>
+        <h2>Organization Verification</h2>
 
-        <section className="section" id="contact">
-          <div className="container">
-            <div className="section-heading">
-              <div className="eyebrow">Our company</div>
-              <h2>Building trust across borders.</h2>
-              <p>
-                TRUSTLOCK GLOBAL is a technology initiative of
-                ARNAUD AFROCHAINE TRUST SYSTEMS LTD.
-              </p>
-              <p>
-                Email: arnaudafrochain@gmail.com
-                <br />
-                Phone: +234 913 285 1465
-              </p>
-            </div>
-          </div>
-        </section>
-      </main>
+        <p>
+          <strong>Account status:</strong> Awaiting
+          organization verification.
+        </p>
 
-      <footer className="site-footer">
-        <div className="container">
-          <strong>TRUSTLOCK GLOBAL</strong>
-          <p>
-            A product of ARNAUD AFROCHAINE TRUST SYSTEMS LTD.
-            <br />
-            African Roots, Global Vision.
-            <br />
-            © {new Date().getFullYear()} ARNAUD AFROCHAINE TRUST SYSTEMS LTD.
-          </p>
-        </div>
-      </footer>
-    </>
+        <p>
+          Your company details must be reviewed before
+          organization approval features become available.
+        </p>
+
+        <hr />
+
+        <h2>TRUSTLOCK Services</h2>
+
+        <ul>
+          <li>Organization verification — Coming soon</li>
+          <li>Authorized officers — Coming soon</li>
+          <li>Document authorization — Coming soon</li>
+          <li>QR verification — Coming soon</li>
+          <li>Audit history — Coming soon</li>
+        </ul>
+
+        <form action={signOutAction}>
+          <button type="submit">
+            Sign Out
+          </button>
+        </form>
+      </section>
+    </main>
   );
 }
