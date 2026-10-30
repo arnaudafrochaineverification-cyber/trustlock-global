@@ -1,0 +1,32 @@
+
+{
+  "name": "trustlock-global",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Global secure document authorization and verification platform by ARNAUD AFROCHAINE TRUST SYSTEMS LTD",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint"
+  },
+  "dependencies": {
+    "next": "15.5.6",
+    "react": "19.1.1",
+    "react-dom": "19.1.1",
+    "pg": "^8.16.3",
+    "zod": "^4.1.12",
+    "jose": "^6.1.0",
+    "qrcode": "^1.5.4"
+  },
+  "devDependencies": {
+    "@types/node": "^22.18.10",
+    "@types/pg": "^8.15.5",
+    "@types/qrcode": "^1.5.5",
+    "@types/react": "^19.1.16",
+    "@types/react-dom": "^19.1.9",
+    "eslint": "^9.37.0",
+    "eslint-config-next": "15.5.6",
+    "typescript": "^5.9.3"
+  }
+}
